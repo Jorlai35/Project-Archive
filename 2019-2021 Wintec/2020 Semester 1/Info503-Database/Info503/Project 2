@@ -1,0 +1,129 @@
+/* Queries */
+/* 1 Queries for the amount of data in the tables*/
+SELECT COUNT(*) "Number of Staff"
+FROM STAFF;
+SELECT COUNT(*) "Number of Specialities"
+FROM SPECIALITY;
+SELECT COUNT(*) "Number of Staff Specialities"
+FROM STAFF_SPECIALITY;
+SELECT COUNT(*) "Number of Charges"
+FROM CHARGES;
+SELECT COUNT(*) "Number of Consultations"
+FROM CONSULTATION;
+
+/* 2 returns staff that joined before 23-jan-17*/
+SELECT *
+FROM STAFF
+WHERE datejoined < '23-Jan-2017';
+
+/* 3 returns staff that have left the company*/
+SELECT *
+FROM STAFF
+WHERE dateleft IS NOT NULL;
+
+/* 4 returns staff that have left and are female*/
+Select *
+FROM STAFF
+WHERE dateleft IS NOT NULL
+AND GENDER = 'F';
+
+/* 5 returns desired values of charges that include a casual patient*/
+SELECT ChrgCode "Charge Code", ChrgDescription "Description", HourlyRate "Hourly Rate"
+FROM CHARGES
+WHERE ChrgDescription LIKE '%casual%';
+
+/* 6 returns results that dont have a casual patient*/
+SELECT ChrgCode "Charge Code",ChrgDescription "Description", HourlyRate "Hourly Rate"
+FROM CHARGES
+WHERE ChrgDescription NOT LIKE '%casual%';
+
+/* 7 returns the highest lowest and average hourly rate for charges*/
+COLUMN "Highest Rate" FORMAT $999.99
+COLUMN "Lowest Rate" FORMAT $999.99
+COLUMN "Average Rate" FORMAT $999.99
+SELECT MAX(HourlyRate) "Highest Rate",MIN(HourlyRate) "Lowest Rate",AVG(HourlyRate) "Average Rate"
+FROM CHARGES;
+
+/* 8 Returns selected values including a calculated value Duration Rate using Hourly rate and duration*/
+COLUMN "Duration Rate" FORMAT $999.99
+SELECT ChrgCode "Charge Code",HourlyRate "Hourly Rate",Duration "Duration",HourlyRate*Duration/60 AS "Duration Rate"
+FROM CHARGES;
+
+/* 9 returns selected values from staff speciality and calculates the days valid for their speciality*/
+SELECT StaffId "Staff Id",SpecId "Speciality Id",DateQualified "Date Qualified",ValidTillDate "Valid Till Date",ValidTillDate-DateQualified AS "Days Valid"
+FROM STAFF_SPECIALITY;
+
+/* 10 calculates and returns their due date for their charges plus some other values*/
+SELECT StaffId "Staff Id",ChrgCode "Charge Code",DateConsulted "Date Consulted",PatientNo "Patient Num",DateConsulted+21 AS "Due Date"
+FROM CONSULTATION;
+
+/* 11 Joins the Speciality and Staff Speciality table to display the specialities name with all of staff speciality columns*/
+SELECT StaffId "Staff Id", SS.SpecId "Speciality Id", S.SpecName "Speciality Name", DateQualified "Date Qualified", ValidTillDate "Valid Till Date"
+FROM  STAFF_SPECIALITY SS
+JOIN SPECIALITY S ON SS.SpecId = S.SpecId;
+
+/* 12 Joins the colsultation and charges table to display the hourly rate for evry colsultation with their data*/
+SELECT StaffId "Staff Id",PatientNo "Patient Num",DateConsulted "Date Consulted",StartTime "Start Time",CHARGES.HourlyRate "Hourly Rate"
+FROM CONSULTATION 
+JOIN CHARGES ON CONSULTATION.ChrgCode = CHARGES.ChrgCode;
+
+/* 13 displays staffs full name and ID with their spec ID for male staff*/
+SELECT STAFF.StaffId "Staff Id",STAFF.FirstName||' '||STAFF.LastName "Staff Full Name",SpecId "Speciality Id"
+FROM STAFF_SPECIALITY JOIN STAFF ON STAFF_SPECIALITY.StaffId = STAFF.StaffId
+WHERE STAFF.Gender = 'M';
+
+/* 14 returns staff ID spec ID and speciuality notes if the notes relate to surgeon or surgery*/
+SELECT StaffId "Staff Id",SPECIALITY.SpecName "Speciality Name",SPECIALITY.SpecNotes "Details"
+FROM STAFF_SPECIALITY JOIN SPECIALITY ON STAFF_SPECIALITY.SpecId = SPECIALITY.SpecId
+WHERE SPECIALITY.SpecNotes LIKE '%Surge%' OR SPECIALITY.SpecNotes LIKE '%surge%';
+
+/* 15 Shows staff ID patient number charge description and time for all consultations after 9.45 and ordered by decending Staff ID*/
+SELECT StaffId,PatientNo, CHARGES.ChrgDescription, StartTime
+FROM CONSULTATION
+JOIN CHARGES ON CONSULTATION.ChrgCode = CHARGES.ChrgCode
+WHERE StartTime > 9.45
+ORDER BY StaffId DESC;
+
+/* 16 Show staff ID and their number of consultations */
+SELECT StaffId "Staff Id",COUNT(*) "Num of Consults"
+FROM CONSULTATION
+GROUP BY StaffId;
+
+/* 17 shows staff id and their number of consultations if they have more than two consultations*/
+SELECT StaffId "Staff Id",COUNT(*) "Num of Consults"
+FROM CONSULTATION
+GROUP BY StaffId
+HAVING COUNT(*) > 2;
+
+/* 18 Show sthe speciality ID and the number of staff with that speciality and displays in decending of the number of staff*/
+SELECT SpecId "Speciality Id", COUNT(StaffId) "Num with Speciality"
+FROM STAFF_SPECIALITY
+GROUP BY SpecId
+ORDER BY COUNT(StaffId) DESC;
+
+/* 19 shows the number of staff having that speciality only if they have more than two staff and sorts by ascending of staff count*/
+SELECT SpecId "Speciality Id", COUNT(StaffId) "Num with Speciality"
+FROM STAFF_SPECIALITY
+GROUP BY SpecId
+HAVING COUNT(StaffId) > 2
+ORDER BY COUNT(StaffId) ASC;
+
+/* 20 shows staff full name and the number of specialities they have*/
+SELECT FirstName||' '||LastName "Staff Full Name",Count(STAFF_SPECIALITY.SpecId) "Num Specialities"
+FROM STAFF
+JOIN STAFF_SPECIALITY ON STAFF.StaffId = STAFF_SPECIALITY.StaffId
+GROUP BY FirstName||' '||LastName;
+
+/* 21 shows the staff full name and their number of specialities if they are male and have more than one specialities*/
+SELECT FirstName||' '||LastName "Staff Full Name",Count(STAFF_SPECIALITY.SpecId) "Num Specialities"
+FROM STAFF
+JOIN STAFF_SPECIALITY ON STAFF.StaffId = STAFF_SPECIALITY.StaffId
+WHERE Gender = 'M'
+GROUP BY FirstName||' '||LastName
+HAVING COUNT(STAFF_SPECIALITY.SpecId) > 1;
+
+/* 22 shows staff ID their full name speciality ID and Spec name for all staff*/
+SELECT St.StaffId,FirstName||' '||LastName "Staff Full Name",SS.SpecId,S.SpecName
+FROM STAFF St
+JOIN STAFF_SPECIALITY SS ON SS.StaffId = St.StaffId
+JOIN SPECIALITY S ON SS.SpecId = S.SpecId;

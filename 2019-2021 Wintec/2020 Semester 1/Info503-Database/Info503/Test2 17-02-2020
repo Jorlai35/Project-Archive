@@ -1,0 +1,5 @@
+CREATE TABLE Colour
+(
+Colour CHAR(2) PRIMARY KEY,
+Colour_desc VARCHAR2(10) NOT NULL
+);

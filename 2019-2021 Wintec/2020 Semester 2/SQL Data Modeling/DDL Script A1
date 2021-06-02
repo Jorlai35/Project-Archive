@@ -1,0 +1,258 @@
+DROP TABLE colour CASCADE CONSTRAINTS;
+CREATE TABLE colour (
+    co_id           NUMBER(8) NOT NULL,
+    co_desc         VARCHAR2(20),
+    vehicle_v_rego  VARCHAR2(6) NOT NULL
+);
+
+CREATE UNIQUE INDEX colour__idx ON
+    colour (
+        vehicle_v_rego
+    ASC );
+
+ALTER TABLE colour ADD CONSTRAINT colour_pk PRIMARY KEY ( co_id );
+
+DROP TABLE customer CASCADE CONSTRAINTS;
+CREATE TABLE customer (
+    c_id         NUMBER(8) NOT NULL,
+    c_title      VARCHAR2(6) CONSTRAINT C_Title_CC CHECK(c_title = 'Master' or c_title = 'Mr' or c_title = 'Miss' or c_title = 'Mrs'),
+    c_firstname  VARCHAR2(10),
+    c_lastname   VARCHAR2(10),
+    c_address    VARCHAR2(20),
+    c_city       VARCHAR2(10),
+    c_suburb     VARCHAR2(10),
+    c_phone      NUMBER(10)
+);
+
+ALTER TABLE customer ADD CONSTRAINT customer_pk PRIMARY KEY ( c_id );
+
+DROP TABLE invoice_receipt CASCADE CONSTRAINTS;
+CREATE TABLE invoice_receipt (
+    customer_c_id                NUMBER(8),
+    sp_invoiceno  NUMBER(10) NOT NULL,
+    ir_receiptno                 NUMBER(8) NOT NULL,
+    ir_amount                    NUMBER(8, 2),
+    ir_date                      DATE
+);
+
+ALTER TABLE invoice_receipt ADD CONSTRAINT invoice_receipt_pk PRIMARY KEY ( sp_invoiceno,
+                                                                            ir_receiptno );
+DROP TABLE item CASCADE CONSTRAINTS;
+CREATE TABLE item (
+    i_num        NUMBER(8) NOT NULL,
+    i_desc       VARCHAR2(50),
+    i_unitprice  NUMBER(8, 2)
+);
+
+ALTER TABLE item ADD CONSTRAINT item_pk PRIMARY KEY ( i_num );
+
+DROP TABLE item_line CASCADE CONSTRAINTS;
+CREATE TABLE item_line (
+    purchase_order_po_num  NUMBER(8) NOT NULL,
+    item_i_num             NUMBER(8) NOT NULL,
+    il_qty                 NUMBER(3),
+    il_total               NUMBER(8, 2)
+);
+
+ALTER TABLE item_line ADD CONSTRAINT item_line_pk PRIMARY KEY ( purchase_order_po_num,
+                                                                item_i_num );
+DROP TABLE purchase_order CASCADE CONSTRAINTS;
+CREATE TABLE purchase_order (
+    po_num        NUMBER(8) NOT NULL,
+    po_date       DATE,
+    po_totalqty   NUMBER(3),
+    po_subtotal   NUMBER(8, 2),
+    staff_s_code  NUMBER(8)
+);
+
+ALTER TABLE purchase_order ADD CONSTRAINT purchase_order_pk PRIMARY KEY ( po_num );
+
+DROP TABLE sales_purchase CASCADE CONSTRAINTS;
+CREATE TABLE sales_purchase (
+    customer_c_id   NUMBER(8) NOT NULL,
+    staff_s_code    NUMBER(8),
+    sp_invoiceno    NUMBER(10) NOT NULL,
+    sp_date         DATE,
+    sp_saleprice    NUMBER(8, 2),
+    sp_aditional    NUMBER(8, 2),
+    sp_deposit      NUMBER(8, 2),
+    sp_outstanding  NUMBER(8, 2),
+    vehicle_v_rego  VARCHAR2(6) NOT NULL
+);
+
+CREATE UNIQUE INDEX sales_purchase__idx ON
+    sales_purchase (
+        vehicle_v_rego
+    ASC );
+
+ALTER TABLE sales_purchase ADD CONSTRAINT sales_purchase_pk PRIMARY KEY ( sp_invoiceno );
+
+DROP TABLE staff CASCADE CONSTRAINTS;
+CREATE TABLE staff (
+    s_code        NUMBER(8) NOT NULL,
+    s_firstname   VARCHAR2(10),
+    s_lastname    VARCHAR2(10),
+    s_phone       NUMBER(10),
+    s_supid       NUMBER(8),
+    staff_s_code  NUMBER(8) NOT NULL
+);
+
+ALTER TABLE staff ADD CONSTRAINT staff_pk PRIMARY KEY ( s_code );
+
+DROP TABLE vehicle CASCADE CONSTRAINTS;
+CREATE TABLE vehicle (
+    colour_co_id  NUMBER(8) NOT NULL,
+    v_rego        VARCHAR2(6) NOT NULL,
+    v_odo         NUMBER(8),
+    v_make        VARCHAR2(10),
+    v_model       VARCHAR2(10),
+    v_year        NUMBER(4),
+    v_noowners    NUMBER(3),
+    v_engineno    VARCHAR2(17),
+    v_vin         VARCHAR2(17),
+    v_extras      NUMBER(2),
+    v_cost        NUMBER(8, 2)
+);
+
+CREATE UNIQUE INDEX vehicle__idx ON
+    vehicle (
+        colour_co_id
+    ASC );
+
+ALTER TABLE vehicle ADD CONSTRAINT vehicle_pk PRIMARY KEY ( v_rego );
+
+ALTER TABLE colour
+    ADD CONSTRAINT colour_vehicle_fk FOREIGN KEY ( vehicle_v_rego )
+        REFERENCES vehicle ( v_rego );
+
+ALTER TABLE invoice_receipt
+    ADD CONSTRAINT invoice_receipt_customer_fk FOREIGN KEY ( customer_c_id )
+        REFERENCES customer ( c_id );
+
+ALTER TABLE invoice_receipt
+    ADD CONSTRAINT IR_SP_FK FOREIGN KEY ( sp_invoiceno )
+        REFERENCES sales_purchase ( sp_invoiceno );
+
+ALTER TABLE item_line
+    ADD CONSTRAINT item_line_item_fk FOREIGN KEY ( item_i_num )
+        REFERENCES item ( i_num );
+
+ALTER TABLE item_line
+    ADD CONSTRAINT item_line_purchase_order_fk FOREIGN KEY ( purchase_order_po_num )
+        REFERENCES purchase_order ( po_num );
+
+ALTER TABLE purchase_order
+    ADD CONSTRAINT purchase_order_staff_fk FOREIGN KEY ( staff_s_code )
+        REFERENCES staff ( s_code );
+
+ALTER TABLE sales_purchase
+    ADD CONSTRAINT sales_purchase_customer_fk FOREIGN KEY ( customer_c_id )
+        REFERENCES customer ( c_id );
+
+ALTER TABLE sales_purchase
+    ADD CONSTRAINT sales_purchase_staff_fk FOREIGN KEY ( staff_s_code )
+        REFERENCES staff ( s_code );
+
+ALTER TABLE sales_purchase
+    ADD CONSTRAINT sales_purchase_vehicle_fk FOREIGN KEY ( vehicle_v_rego )
+        REFERENCES vehicle ( v_rego );
+
+ALTER TABLE staff
+    ADD CONSTRAINT staff_staff_fk FOREIGN KEY ( staff_s_code )
+        REFERENCES staff ( s_code );
+
+ALTER TABLE vehicle
+    ADD CONSTRAINT vehicle_colour_fk FOREIGN KEY ( colour_co_id )
+        REFERENCES colour ( co_id );
+        
+        
+DROP SEQUENCE C_Id_Seq;
+CREATE SEQUENCE C_Id_Seq
+START WITH 1
+INCREMENT BY 1;
+
+/*DROP TRIGGER C_Id_Trg;*/
+CREATE OR REPLACE TRIGGER C_Id_Trg
+BEFORE INSERT ON Customer
+REFERENCING NEW AS NEW
+FOR EACH ROW
+BEGIN
+    SELECT C_Id_Seq.NEXTVAL INTO :NEW.C_Id FROM DUAL;
+END;
+/
+
+DROP SEQUENCE I_Num_Seq;
+CREATE SEQUENCE I_Num_Seq
+START WITH 1
+INCREMENT BY 1;
+
+/*DROP TRIGGER I_Num_Trg;*/
+CREATE OR REPLACE TRIGGER I_Num_Trg
+BEFORE INSERT ON item
+REFERENCING NEW AS NEW
+FOR EACH ROW
+BEGIN
+    SELECT I_Num_Seq.NEXTVAL INTO :NEW.I_Num FROM DUAL;
+END;
+/
+
+DROP SEQUENCE CO_Id_Seq;
+CREATE SEQUENCE CO_Id_Seq
+START WITH 1
+INCREMENT BY 1;
+
+/*DROP TRIGGER CO_Id_Trg;*/
+CREATE OR REPLACE TRIGGER CO_Id_Trg
+BEFORE INSERT ON colour
+REFERENCING NEW AS NEW
+FOR EACH ROW
+BEGIN
+    SELECT CO_Id_Seq.NEXTVAL INTO :NEW.CO_Id FROM DUAL;
+END;
+/
+
+DROP SEQUENCE PO_Num_Seq;
+CREATE SEQUENCE PO_Num_Seq
+START WITH 80000000
+INCREMENT BY 1;
+
+/*DROP TRIGGER PO_Num_Trg;*/
+CREATE OR REPLACE TRIGGER PO_Num_Trg
+BEFORE INSERT ON Purchase_Order
+REFERENCING NEW AS NEW
+FOR EACH ROW
+BEGIN
+    SELECT PO_Num_Seq.NEXTVAL INTO :NEW.PO_Num FROM DUAL;
+END;
+/
+
+DROP SEQUENCE SP_InvoiceNo_Seq;
+CREATE SEQUENCE SP_InvoiceNo_Seq
+START WITH 10000000
+INCREMENT BY 1;
+
+/*DROP TRIGGER SP_InvoiceNo_Trg;*/
+CREATE OR REPLACE TRIGGER SP_InvoiceNo_Trg
+BEFORE INSERT ON Sales_Purchase
+REFERENCING NEW AS NEW
+FOR EACH ROW
+BEGIN
+    SELECT SP_InvoiceNo_Seq.NEXTVAL INTO :NEW.SP_InvoiceNo FROM DUAL;
+END;
+/
+
+DROP SEQUENCE IR_ReceiptNo_Seq;
+CREATE SEQUENCE IR_ReceiptNo_Seq
+START WITH 90000000
+INCREMENT BY 1;
+
+/*DROP TRIGGER IR_ReceiptNo_Trg;*/
+CREATE OR REPLACE TRIGGER IR_ReceiptNo_Trg
+BEFORE INSERT ON Invoice_Receipt
+REFERENCING NEW AS NEW
+FOR EACH ROW
+BEGIN
+    SELECT IR_ReceiptNo_Seq.NEXTVAL INTO :NEW.IR_ReceiptNo FROM DUAL;
+END;
+/
+

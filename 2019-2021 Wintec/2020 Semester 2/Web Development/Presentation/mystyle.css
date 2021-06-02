@@ -1,0 +1,17 @@
+.Grid{
+	display: grid;
+	grid-template-columns: auto auto auto auto;
+	Grid-Column-Gap: 2px;
+	Grid-Row-Gap: 2px;
+	background-color: rgba(43, 92, 161, 1);
+	padding: 10px;
+}
+.Grid div{
+	background-color: rgba(107, 143, 194, 1);
+	border: 1px solid black;
+	text-align: center;
+	padding: 20px;
+}
+.Span{
+	Grid-column: Span 2;
+}

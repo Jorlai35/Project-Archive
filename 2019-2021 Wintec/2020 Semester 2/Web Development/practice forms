@@ -1,0 +1,12 @@
+<!doctype html>
+<html>
+	<body>
+	<H1>INTRODUCTION TO FORMS</H1>
+	<FORM action="" method="">
+	<p> Text Input </p>
+		<label for="Username"> Username ></label>
+	<input type="text" name="Username" maxlength="15">
+	
+	</FORM>
+	</body>
+</html>

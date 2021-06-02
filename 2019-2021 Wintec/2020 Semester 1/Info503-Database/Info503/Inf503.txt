@@ -1,0 +1,23 @@
+DBA = DataBase Administrator
+DataBase languages include C++, COBOL
+
+Problems with file base systems include data isolation, duplication and dependence. incompatible file formats.
+Disadvantages of DBMS include complexity, size, cost, performance and bigger impacts of failure.
+
+Data with context becomes information. Data itself is usless
+
+DataBase Schemas;
+Internal Schema(Developers) is a physical representation of the data and how its stored
+conceptual Schema(community Veiw) ...
+External Schema(Users) ...
+
+ACID
+Atomic = Process should execute none or all of the function
+Consistant = 
+Isolated = Process should run hidden and not be visible to users
+Durable = a completed transaction should be permently saved so future failure wont affect it
+
+
+SQL Commands
+DESCRIBE ..., shows all details about the collum
+REFRENCES ..Table(Collum).., Compares the inputted data to data stored in another table confirming its a valid input

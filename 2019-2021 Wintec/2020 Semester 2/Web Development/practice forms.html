@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+	<body>
+	<H1>INTRODUCTION TO FORMS</H1>
+	<FORM action="" method="post">
+	<h3> Text Input </h3>
+		<label for="Username"> Username </label>
+	<input type="text" name="Username" maxlength="15">
+	<br/><br/>
+	
+	<label for="Password"> Password </label>
+	<input type="Password" name="Password" maxlength="8">
+	
+	<br/><br/>
+	<h3> Text Area </h3>
+	<label> Comments </label>
+	<textarea name="Comments" cols="30" rows="8"> Enter your feedback here.. </textarea>
+	<br/><br/>
+	
+	<h3> Radio Buttons </h3>
+	<input type="radio" name="Gender" value="Male" checked="checked"> Male </input>
+	<br/>
+	<input type="radio" name="Gender" value="Female"> Female </input>
+	<br/><br/>
+	
+	<h3> Checkboxes </h3>
+	<input type="checkbox" name="ChocolateTypes" value="Kitkat" checked="checked"> Kitkat
+	<input type="checkbox" name="ChocolateTypes" value="Kinda"> Kinda
+	<input type="checkbox" name="ChocolateTypes" value="Snickers"> Snickers
+	<br/><br/>
+	
+	<h3> Dropdown Boxes </h3>
+	<select name="Countrynames">
+	<option value="New Zealand"> New Zealand </option>
+	<option value="India"> India </option>
+	<option value="China"> China </option>
+	<option value="Japan"> Japan </option>
+	</select>
+	<br/><br/>
+	
+	<h3> Multiple Select Box </h3>
+	<select name="Countrynames" multiple="multiple">
+	<option value="New Zealand"> New Zealand </option>
+	<option value="India"> India </option>
+	<option value="China"> China </option>
+	<option value="Japan"> Japan </option>
+	</select>
+	<br/><br/>
+	
+	<h3> File upload/Input box </h3>
+	<input type="file" name="CVUpload">
+	<br/><br/>
+	
+	<h3> Submit Button </h3>
+	<input type="submit" name="Subscribe" value="Post">
+	<br/><br/>
+	
+	<h3> Image Button </h3>
+	<input type="Image" src="" name="Imagebtn">
+	<br/><br/>
+	
+	<h3> Grouping Fourms</h3>
+	<fieldset>
+		<label> First Name</label>
+		<input type="text" name="FirstName">
+		<label> Last Name </label>
+		<input type="text" name="LastName">
+	</fieldset>
+	<br/><br/>
+	
+	<h3> Fourm Validation </h3>
+	<label> First Name </label>
+	<input type="text" name="FirstName" required="required">
+	<br/><br/>
+	
+	<h3> Date Input </h3>
+	<label> Arrival Date </label>
+	<input type="date" name="ArrivalDate">
+	<br/><br/>
+	
+	<h3> Email Input </h3>
+	<label> Email </label>
+	<input type="email" name="Email">
+	<br/><br/>
+	
+	<h3> Search </h3>
+	<label> Search </label>
+	<input type="search" name="Search" placeholder="Search...">
+	<br/><br/>
+	
+	<h3> Reset </h3>
+	<label> Reset </label>
+	<input type="reset" name="Reset">
+	</FORM>
+	</body>
+</html>

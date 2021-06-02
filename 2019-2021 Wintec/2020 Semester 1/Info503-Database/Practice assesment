@@ -1,0 +1,45 @@
+CREATE TABLE COURSE
+(
+course_code char(5) primary key,
+course_name varchar(25)
+);
+
+CREATE TABLE STUDENT
+(
+student_Id char(3) primary key,
+course_code char(5) references COURSE(course_code),
+fname varchar(15) not null,
+lname varchar(10),
+dob date check(dob >= '1-Jan-1985'),
+gender char(1) check(gender in('M','F')),
+fees number(6,2)
+);
+
+insert into COURSE
+values ('IT503','Database Principles');
+insert into COURSE
+values ('IT502','Programming Fundamentals');
+insert into COURSE
+values ('IT501','Networking');
+
+insert into STUDENT
+values(101,'IT503','Josh','Sprosen','1-Jan-1985','M',1680.50);
+insert into STUDENT
+values(104,'IT503','Selena','Gomez','1-Jan-1986','F',1650.75);
+insert into STUDENT
+values(106,'IT502','Josh','Sears','31-Dec-1985','M',1600.00);
+insert into STUDENT
+values(107,'IT503','Miley','Cyrus','29-Feb-1992','F',1675.00);
+insert into STUDENT
+values(109,'IT502','Taylor','Swift','15-May-1995','F',1720.00);
+
+describe STUDENT;
+describe COURSE;
+
+select *
+from STUDENT;
+commit;
+
+delete from STUDENT;
+rollback;
+

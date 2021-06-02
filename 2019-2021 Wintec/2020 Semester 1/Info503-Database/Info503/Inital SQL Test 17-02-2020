@@ -1,0 +1,12 @@
+Create Table Employees
+(FirstName VarChar(10),
+LastName VarChar(10),
+Title VarChar(10),
+Age Number(3),
+Salary Number(8,2)
+);
+
+/* under salary number the 8 is the total didgets including decimals and the 2 is the amount of decimal places 100,000.00*/
+
+SELECT table_name
+FROM user_tables;

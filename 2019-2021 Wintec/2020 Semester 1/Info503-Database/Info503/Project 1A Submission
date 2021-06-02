@@ -1,0 +1,177 @@
+/*
+Student: Jordan Laing 19487922
+Date: 18/02/20
+*/
+
+/*
+This table records the staff within the company. 
+they are given a staffID to be able to refrence them and make all users unique
+The role and the gender colums also have constraints on the inputs that are accepted
+*/
+CREATE TABLE STAFF
+(
+StaffId CHAR(2) PRIMARY KEY,
+FirstName VARCHAR(20),
+LastName VARCHAR(20),
+Role VARCHAR(15) CHECK(Role IN('GP','Surgeon','Reception','GP Intern','Nurse','Senior Nurse','Nurse Intern','Marketing')),
+Gender CHAR(1) CHECK(Gender IN('M','F')),
+DateJoined DATE NOT NULL,
+DateLeft DATE /*this is able to be null since the staff may have joined but not left*/
+);
+
+/*a table to list all speciality that each employee can be.Its given an id so it can be refrenced*/
+CREATE TABLE SPECIALITY
+(
+SpecId CHAR(4) PRIMARY KEY,
+SpecName VARCHAR(25),
+SpecNotes VARCHAR(100)
+);
+
+/*Organises the charge using a code to be later refrenced in another table*/
+CREATE TABLE CHARGES
+(
+ChrgCode CHAR(7) PRIMARY KEY,
+ChrgDescription VARCHAR(80) NOT NULL,
+Duration NUMBER(2) NOT NULL CHECK(Duration <= 60),
+HourlyRate NUMBER(3) CHECK(HourlyRate < 400)
+);
+
+/*This tables bring the SpecID from the speciality table and teh StaffID from the staff table to create a composite key*/
+CREATE TABLE STAFF_SPECIALITY
+(
+StaffId CHAR(2) REFERENCES STAFF(StaffId),
+SpecId CHAR(4) REFERENCES SPECIALITY(SpecId),
+DateQualified DATE NOT NULL,
+ValidTillDate DATE,
+Details VARCHAR(100),
+PRIMARY KEY(StaffId,SpecId)
+);
+
+/*this also creates a composite key using Chrgcode and StaffID from teh Charges and Staff tables*/
+CREATE TABLE CONSULTATION
+(
+ChrgCode CHAR(7) REFERENCES CHARGES(ChrgCode),
+StaffId CHAR(2) REFERENCES STAFF(StaffId),
+DateConsulted DATE NOT NULL,
+StartTime NUMBER(4,2),
+PatientNo CHAR(7),
+PRIMARY KEY(ChrgCode,StaffId)
+);
+
+
+/*Staff Data Insert*/
+INSERT INTO STAFF(StaffId,FirstName,LastName,Role,Gender,DateJoined)
+VALUES (1,'Homer','Simpson','GP','M','21-Apr-2015');
+INSERT INTO STAFF(StaffId,FirstName,LastName,Role,Gender,DateJoined)
+VALUES (2,'Marge','Simpson','Reception','F','27-Apr-2015');
+INSERT INTO STAFF(StaffId,FirstName,LastName,Role,Gender,DateJoined)
+VALUES (3,'Apu','Nahasapeemapetilon','Surgeon','M','14-May-2015');
+INSERT INTO STAFF(StaffId,FirstName,LastName,Role,Gender,DateJoined)
+VALUES (4,'Kent','Brockman','Marketing','M','14-May-2015');
+INSERT INTO STAFF(StaffId,FirstName,LastName,Role,Gender,DateJoined)
+VALUES (5,'Patty','Bouvier','Reception','F','23-Mar-2016');
+INSERT INTO STAFF(StaffId,FirstName,LastName,Role,Gender,DateJoined)
+VALUES (6,'Selma','Bouvier','Senior Nurse','F','27-Mar-2016');
+INSERT INTO STAFF(StaffId,FirstName,LastName,Role,Gender,DateJoined)
+VALUES (7,'Ned','Flanders','Nurse','M','18-Oct-2016');
+INSERT INTO STAFF
+VALUES (8,'Ralph','Wiggum','Marketing','M','23-Jan-2017','24-Jun-2017');
+INSERT INTO STAFF(StaffId,FirstName,LastName,Role,Gender,DateJoined)
+VALUES (9,'Montgomery','Burns','Marketing','M','3-Feb-2017');
+INSERT INTO STAFF
+VALUES (10,'Lisa','Simpson','GP','F','4-Dec-2017','17-Aug-2018');
+INSERT INTO STAFF(StaffId,FirstName,LastName,Role,Gender,DateJoined)
+VALUES (11,'Disco','Stu','Nurse Intern','M','27-Mar-2018');
+INSERT INTO STAFF(StaffId,FirstName,LastName,Role,Gender,DateJoined)
+VALUES (12,'Jordan','Laing','Nurse Intern','M','2-Mar-2020');
+
+
+/*Speciality Data Insert*/
+INSERT INTO SPECIALITY
+VALUES(0123,'General Consultancy','Includes all areas as a GP');
+INSERT INTO SPECIALITY
+VALUES(0124,'Emergency Care','Can perform minor surgeries');
+INSERT INTO SPECIALITY
+VALUES(0125,'Vaccination','Generally taken care of by nurse');
+INSERT INTO SPECIALITY
+VALUES(0126,'Tests','Collect samples for testing as required by GP or Surgeon');
+INSERT INTO SPECIALITY
+VALUES(0127,'Repeat Prescription','Generally taken care of by a nurse');
+
+
+/*Charges Data Insert*/
+INSERT INTO Charges
+VALUES(0081,'General GP consultation for registered patients',20,180);
+INSERT INTO Charges
+VALUES(0082,'General GP consultation for casual patients',20,360);
+INSERT INTO Charges
+VALUES(0085,'Emergency Medical Care for registered or casual patients',30,0);
+INSERT INTO Charges
+VALUES(0086,'Vaccination or Test collection for registered patients',15,0);
+INSERT INTO Charges
+VALUES(0088,'Vaccination or Test collection for casual patients',15,40);
+INSERT INTO Charges
+VALUES(0089,'Repeat Prescription',5,5);
+
+
+/*Consultation Data Insert*/
+INSERT INTO Consultation
+VALUES(0082,1,'1-Sep-2018',8.30,'A012345');
+INSERT INTO Consultation
+VALUES(0085,3,'4-Sep-2018',9.45,'N333333');
+INSERT INTO Consultation
+VALUES(0085,7,'6-Sep-2018',9.45,'I445566');
+INSERT INTO Consultation
+VALUES(0086,7,'6-Sep-2018',10.30,'K222333');
+INSERT INTO Consultation
+VALUES(0089,12,'7-Sep-2018',10.45,'A343434');
+
+
+/*Staff_Speciality Data Insert*/
+INSERT INTO STAFF_SPECIALITY
+VALUES(1,0123,'24-Apr-2014','23-Apr-2024','General Practitioner license renewed');
+INSERT INTO STAFF_SPECIALITY
+VALUES(1,0124,'14-May-2016','14-Nov-2021','Certified only to assist a surgery');
+INSERT INTO STAFF_SPECIALITY
+VALUES(3,0124,'01-Aug-2015','31-Jul-2020','Special certification  in emergency care');
+INSERT INTO STAFF_SPECIALITY
+VALUES(6,0125,'25-Jul-2017','24-Jul-2019','Renewed license');
+INSERT INTO STAFF_SPECIALITY
+VALUES(7,0124,'01-Aug-2015','31-Jul-2020','Can assist a surgeon in emergency care');
+INSERT INTO STAFF_SPECIALITY
+VALUES(7,0126,'17-Jul-2015','16-Jul-2020','Renewed license');
+INSERT INTO STAFF_SPECIALITY
+VALUES(11,0127,'01-Aug-2017','31-Aug-2018','Intern under training');
+INSERT INTO STAFF_SPECIALITY
+VALUES(12,0127,'03-Aug-2017','02-Sep-2018','Intern under training');
+
+
+/*Queries*/
+/*Displays all the tables that are stored on the database*/
+SELECT table_name
+FROM user_tables;
+
+/*Displays the structure of the specified table(staff,speciality,...)*/
+DESCRIBE staff;
+DESCRIBE speciality;
+DESCRIBE charges;
+DESCRIBE consultation;
+DESCRIBE staff_speciality;
+
+/*Displays the uploaded data currently in the specified database and doesnt filter the data displayed*/
+SELECT *
+FROM staff;
+SELECT *
+FROM speciality;
+SELECT *
+FROM charges;
+SELECT *
+FROM consultation;
+SELECT *
+FROM staff_speciality;
+
+/*displays the data from the staff table and filters the collums that it displays*/
+/*it combines the first and last name of the staff using ||''|| to display 'Full Name'*/
+SELECT staffid "Staff Id",firstname||' '||lastname "Staff Full Name",datejoined "Date Joined",dateleft "Date Left"
+FROM staff
+ORDER BY firstname ASC;

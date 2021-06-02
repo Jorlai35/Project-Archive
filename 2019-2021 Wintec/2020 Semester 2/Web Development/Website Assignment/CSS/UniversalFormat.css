@@ -1,0 +1,65 @@
+.PageHeader{
+	background-color: rgb(55,60,116);
+	height: 350px;
+	margin: auto;
+}
+.Center{
+	display: block;
+	margin: auto;
+}
+.NavBar{
+	list-style-type: none;
+	padding: 0;
+	top: 0;
+	position: sticky;
+	background-color: rgb(55,60,116);
+	overflow: hidden;
+	margin: 0;
+}
+.NavBar li{
+	float: left;
+	margin: 0;
+}
+.NavBar a{
+	display: block;
+	border-radius: 10px 10px 0 0;
+	text-align: center;
+	padding: 14px 16px;
+	background-color: rgb(166,166,166);
+	text-decoration: none;
+}
+.NavBar a:hover{
+	background-color: rgb(0,0,0);
+}
+
+
+.GridContainer{
+	display: grid;
+	grid-gap: 10px;
+	grid-template-columns: 1fr 1fr;
+}
+
+.GridContainer div{
+	background-color: pink;
+}
+
+.HomeSlideShow{
+	display: grid;
+	grid-template-columns: 1fr 5fr 1fr;
+}
+.MainImg{
+	height: 600px;
+	width: 100%;
+	background-color: red;
+}
+.SubImg{
+	height: 500px;
+	width: 180px;
+	background-color: red;
+}
+.HomeSlideShow a{
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
+
+
